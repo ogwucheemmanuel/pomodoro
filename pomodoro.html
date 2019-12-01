@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <link rel="stylesheet" href="bootstrap.min.css"/>
+  <link rel="stylesheet" type="text/css" href="css/style.css">
+</head>
+<body>
+  <div class="all" align="center">
+        <div class="container-fluid">
+    <div class="row text-center">
+        <p id="display">25:00</p>
+        <div class="one">
+        <button id="more" class="btl">+</button>
+        <button id="less" class="btl">-</button>
+        </div>
+      <button id="go" class="bt2">Start/Resume</button>
+      <button  id="pause" class="bt2">Pause</button>
+      <button id="reset" class="bt2">Stop/Reset</button>
+    </div>
+  </div>  
+</div>
+  <script type="text/javascript" src="jquery-3.3.1.js"></script>
+  <script>
+    var tf;
+    var Start;
+    var length;
+    var end;
+    var X;
+    var now;
+    var remaining;
+    var minutes;
+    var seconds;
+    var d;
+    var f;
+    var left;
+    var right;
+    var line = [];
+    var slice;
+    var pauseTime;
+    var pauselength;
+    //show default value page is loaded
+    $(document).ready(function() {
+      tf = 25;
+      $('#display').html('25:00');
+    });
+    function display(){
+      $('#display').empty().html(tf + ':00');
+    }
+    //user to add mins
+    $('#more').on('click',function(){
+      tf = tf + 1;
+      display();
+    });
+    //user to add mins
+    $('#less').on('click',function(){
+      tf = tf - 1;
+      display();
+    });
+    //update the count down every 1 second\
+    function a (){
+      x = setInterval(function (){
+      //n get time when the user the usern clicks
+      now = $.now();
+      //find the distance between now and the count down time
+      remaining  = end - now;
+      //Time calculator for days, hours, mintes, and seconds
+      minutes = Math.floor((remaining % (1000 * 60 *60))/(1000 * 60));
+      seconds = Math.round((remaining % (1000 * 60))/1000);
+      //display the result in the element with id ="demo"
+      if (seconds ==60){
+        document.getElementById("dislay").innerHTML = "1:00";
+      }
+      else if (seconds < 10){
+        document.getElementById("dislay").innerHTML = minutes + ":00" + seconds;
+      }
+      else document.getElementById("display").innerHTML = minutes + ":" + seconds;
+
+      //if the count down is finished, write some text
+      if (remaining < 0) {
+        clearInterval(x);
+        document.getElementById("display").innerHTML = "END";
+      }
+      //to animate the pie 
+      d = 360/length;
+      i = length-remaining;
+      right = 90+d*i;
+      left = -90+d*i-180;
+      //rotates the red, show blue on the right
+      if (right < 90) {
+        line = ['linear-gradient(' + right + 'deg, #ffaed2 50%, transparent 50% )',
+          'linear-gradient(-90deg, #5795ee 50%, transparent 50%)'
+        ];
+      }
+      //rotates the blue, show blue on both sides
+      else{
+        line = ['linear-gradient(' + left + 'deg, #5795ee 50%, transparent 50% )',
+         'linear-gradient(-90deg, #5795ee 50%, transparent 50%)'
+        ];
+      }
+      //to update the class of the pie 
+      slice = $('timer').css({
+      'background-image': line.join(',')
+  });
+
+},1000);
+
+}
+//user to start or resume
+$('#go').on('click', function(){
+  //to start
+  if (isNaN (pauseTime)){
+    start = $.now ();
+    length = tf*60*1000;
+    end = start+length;
+    a();
+  }
+  //to resume
+  else {
+    start = $.now();
+    end = start+pauselength;
+    a();
+  }
+});
+//user to pause
+$('#pause').on('click', function() {
+  pauseTime = $.now();
+  pauselength = end-pauseTime;
+  clearInterval(x);
+});
+//user to reset
+$('#reset').on ('click', function(){
+  clearInterval(x);
+  slice = $('#timer').css({
+    'background-image': 'linear-gradient(-90deg, #ffaed2 50%, transparent 50%)'
+  });
+  tf = 25;
+  display();
+  pauseTime = NaN;
+});
+</script>
+</body>
+</html>
